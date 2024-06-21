@@ -4,6 +4,7 @@ from tqdm import tqdm
 import torch
 from .utils import replace_label
 import copy
+from models.model_wrapper import model_wrapper_removal_patch, model_wrapper_replace_baselinevalue
 
 BATCH_SIZE = 500
 
@@ -14,7 +15,10 @@ def calc_correct_count(args, model, imageProcessor, images, labels, masked_list,
         labels_torch = torch.tensor(labels).to(args.device)
         combined_lists = [[sublist[i] for sublist in masked_list] for i in range(len(masked_list[0]))]
         for index, mask in enumerate(combined_lists):
-            outputs = model(**inputs, bool_masked_pos=mask)['logits']
+            if args.interaction_method == 'pixel_zero_values':
+                outputs = model_wrapper_replace_baselinevalue(args, model, inputs, mask)
+            elif args.interaction_method == 'vit_embedding':
+                outputs = model_wrapper_removal_patch(model, inputs, mask)
             collect_count[index] += (torch.argmax(outputs, axis=1) == labels_torch).sum()
     return collect_count
 
