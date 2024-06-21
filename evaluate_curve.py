@@ -1,7 +1,7 @@
 import os
 import torch
 import pprint
-from models.load_model import load_model, replace_vit_embedding
+from models.load_model import load_model, replace_vit_embedding_mask
 from src.data.load_dataset import load_dataset
 from src.util.load_parser import load_parser
 from src.util.load_yaml_config import load_yaml_config
@@ -25,7 +25,7 @@ def main(args):
 
     # load model and dataset
     model, imageProcessor = load_model(args)
-    model = replace_vit_embedding(args, model)
+    model = replace_vit_embedding_mask(args, model)
     model.eval()
     
     dataset = load_dataset(args)

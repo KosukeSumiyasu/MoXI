@@ -30,7 +30,7 @@ def load_model(args):
     return model, image_processor
 
 # when using the mask method with a removal patch, vit_embedding is replaced.
-def replace_vit_embedding(args, model):
+def replace_vit_embedding_mask(args, model):
     if args.interaction_method == 'vit_embedding' and not args.isUsedTargetLayer:
         print('vit embedding')
         print('Target Layer is not used')
