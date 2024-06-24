@@ -17,7 +17,6 @@ def load_parser():
     parser.add_argument('--dataset_indexpath', default=None, type=str, help='dataset index path')
     parser.add_argument('--interaction_method', default='vit_embedding', type=str, choices=['vit_embedding', 'pixel_zero_values'])
     parser.add_argument('--identify_method', default='self-shapley', type=str, choices=['self-shapley', 'MoXI', 'full-shapley', 'gradcam', 'attention_rollout'])
-    parser.add_argument('--isUsedTargetLayer', default=False, type=bool, help='is used target layer')
     parser.add_argument('--target_mask_layer', default=-1, type=int, help='target mask layer') # -1, 0-11
     parser.add_argument('--isTraining', default=False, type=bool, help='if training, you can use this flag')
     parser.add_argument('--num_m_patterns', default=200, type=int, help='if you use full-shapley values, set the number of m patterns')

@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import copy
 from pytorch_grad_cam.utils.image import show_cam_on_image
+from models.model_wrapper import model_wrapper_removal_patch, model_wrapper_replace_baselinevalue
 
 def convert_image_to_heatmap(args, image, count_list):
     rgb_img = np.array(image)
@@ -16,7 +17,10 @@ def convert_image_to_heatmap(args, image, count_list):
 
 def get_accuracy(args, model, imageProcessor, image, label, insert_index_list, mask_num):
     inputs = imageProcessor(image, return_tensors="pt").to(args.device)
-    outputs = model(**inputs, bool_masked_pos=[insert_index_list[mask_num]])['logits']
+    if args.interaction_method == 'pixel_zero_values':
+        outputs = model_wrapper_replace_baselinevalue(args, model, inputs, [insert_index_list[mask_num]])
+    elif args.interaction_method == 'vit_embedding':
+        outputs = model_wrapper_removal_patch(model, inputs, [insert_index_list[mask_num]])
     isCorrect = (torch.argmax(outputs, axis=1) == label).sum().item()
     confidence = torch.softmax(outputs, dim=1)[0][label].item()
     return isCorrect, confidence

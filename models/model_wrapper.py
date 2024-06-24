@@ -6,7 +6,7 @@ import copy
 # When using the mask method with a removal patch, calculate the logits of the model.
 def model_wrapper_removal_patch(model, inputs, mask):
     with torch.no_grad():
-        output = model(**inputs, bool_masked_pos=mask)['logits']
+        output = model(**inputs, embedding_mask=mask)['logits']
     return output
 
 # When using the mask method with a replace baseline value, calculate the logits of the model.

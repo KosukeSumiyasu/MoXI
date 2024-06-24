@@ -3,7 +3,7 @@ dataset_sampling_number=100;
 model_name='vit-t'; 
 interaction_method='vit_embedding'; # ['vit_embedding', 'pixel_zero_values']
 curve_method='deletion'; # ['insertion', 'deletion']
-CONFIG_PATH='';
+CONFIG_PATH='./config/config_file_path.yaml';
 
 ## ['shapley', 'shap+int_self', 'shap+int_full', 'gradcam', 'attention_rollout']
 identify_method='self-shapley'; 

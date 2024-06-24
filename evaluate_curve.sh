@@ -5,7 +5,8 @@ training_class_num=1000;
 dataset_sampling_number=100;
 model_name='vit-t'; 
 curve_method='deletion'; # ['insertion', 'deletion']
-CONFIG_PATH=''
+interaction_method='vit_embedding'; # ['vit_embedding', 'pixel_zero_values']
+CONFIG_PATH='./config/config_file_path.yaml'
 
 identify_method='self-shapley'
 python3 evaluate_curve.py \
@@ -17,6 +18,7 @@ python3 evaluate_curve.py \
         --curve_method=$curve_method \
         --config_path=$CONFIG_PATH \
         --dataset_sampling_number=$dataset_sampling_number \
+        --interaction_method=$interaction_method \
 
 identify_method='MoXI'
 python3 evaluate_curve.py \
@@ -28,6 +30,7 @@ python3 evaluate_curve.py \
         --curve_method=$curve_method \
         --config_path=$CONFIG_PATH \
         --dataset_sampling_number=$dataset_sampling_number \
+        --interaction_method=$interaction_method \
 
 identify_method='full-shapley'
 python3 evaluate_curve.py \
@@ -39,6 +42,7 @@ python3 evaluate_curve.py \
         --curve_method=$curve_method \
         --config_path=$CONFIG_PATH \
         --dataset_sampling_number=$dataset_sampling_number
+        --interaction_method=$interaction_method \
 
 identify_method='attention_rollout'
 python3 evaluate_curve.py \
@@ -50,6 +54,7 @@ python3 evaluate_curve.py \
         --curve_method=$curve_method \
         --config_path=$CONFIG_PATH \
         --dataset_sampling_number=$dataset_sampling_number \
+        --interaction_method=$interaction_method \
 
 identify_method='gradcam'
 python3 evaluate_curve.py \
@@ -61,3 +66,4 @@ python3 evaluate_curve.py \
         --curve_method=$curve_method \
         --config_path=$CONFIG_PATH \
         --dataset_sampling_number=$dataset_sampling_number \
+        --interaction_method=$interaction_method \

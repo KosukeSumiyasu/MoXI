@@ -6,8 +6,8 @@ sys.path.append('../')
 from models.model_wrapper import model_wrapper_removal_patch, model_wrapper_replace_baselinevalue
 
 #---------------attention rollout-----------------
-def get_reward_attention_rollout(image, model, imageProcessor):
-    inputs = imageProcessor(images=image, return_tensors='pt').to('cuda')
+def get_reward_attention_rollout(args, image, model, imageProcessor):
+    inputs = imageProcessor(images=image, return_tensors='pt').to(args.device)
     outputs = model(**inputs, output_attentions=True)
     attention_list = outputs['attentions']
     attention = torch.stack(attention_list, dim=0).cpu()
@@ -25,9 +25,9 @@ def get_reward_attention_rollout(image, model, imageProcessor):
     return reward
 
 #---------------gradcam-----------------
-def get_reward_gradcam(image, label, model, imageProcessor):
-    image_tensor = imageProcessor(images=image, return_tensors='pt').to('cuda')['pixel_values']
-    gray_scale_cam = grad_cam(image_tensor, model, label, use_cuda=True)
+def get_reward_gradcam(args, image, label, model, imageProcessor):
+    image_tensor = imageProcessor(images=image, return_tensors='pt').to(args.device)['pixel_values']
+    gray_scale_cam = grad_cam(image_tensor, model, label)
     gray_scale_cam = gray_scale_cam[0, :]
 
     return gray_scale_cam
@@ -44,10 +44,10 @@ def get_reward_shapley(args, model, inputs, label):
             masked_list.append([x for x in all_i if x != i])
     
     with torch.no_grad():
-        if args.isUsedTargetLayer:
-            logits = model(**inputs, target_mask_layer=args.target_mask_layer, mask_list = masked_list)['logits']
-        else:
-            logits = model(**inputs, bool_masked_pos=masked_list)['logits']
+        if args.interaction_method == 'pixel_zero_values':
+            logits = model_wrapper_replace_baselinevalue(args, model, inputs, masked_list)
+        elif args.interaction_method == 'vit_embedding':
+            logits = model_wrapper_removal_patch(model, inputs, masked_list)
         reward = get_reward(args, logits, label)
     return reward
 
@@ -62,14 +62,14 @@ def get_reward_interaction(args, model, inputs, label, identified_patch):
         for i in all_i:
             remove_subset = [x for x in all_i if x not in [i]+identified_patch]
             masked_list.append(remove_subset)
-        for identified_patch_index in identified_patch: # 後で削除するため，適当な値を抜いておく
+        for identified_patch_index in identified_patch:
             masked_list[identified_patch_index].pop(0)
 
     with torch.no_grad():
-        if args.isUsedTargetLayer:
-            logits = model(**inputs, target_mask_layer=args.target_mask_layer, mask_list = masked_list)['logits']
-        else:
-            logits = model(**inputs, bool_masked_pos=masked_list)['logits']
+        if args.interaction_method == 'pixel_zero_values':
+            logits = model_wrapper_replace_baselinevalue(args, model, inputs, masked_list)
+        elif args.interaction_method == 'vit_embedding':
+            logits = model_wrapper_removal_patch(model, inputs, masked_list)
         reward = get_reward(args, logits, label)
     return reward
 
@@ -77,7 +77,7 @@ def get_reward_interaction(args, model, inputs, label, identified_patch):
 def calc_logits_to_shapley(args, model, i_list, m_list, inputs):
     i_list = [[i_list[k]] + m_list[k] for k in range(len(m_list))]
     # masking method is pixel_zero_input
-    if args.interaction_method == 'pixel_zero_input':
+    if args.interaction_method == 'pixel_zero_values':
         i_output = model_wrapper_replace_baselinevalue(args, model, inputs, i_list)
         m_output = model_wrapper_replace_baselinevalue(args, model, inputs, m_list)
     # masking method is vit_embedding
