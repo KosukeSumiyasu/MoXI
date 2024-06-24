@@ -1,6 +1,6 @@
 from transformers import ViTForImageClassification, ViTImageProcessor, ViTConfig, ViTModel, ResNetForImageClassification, AutoImageProcessor
-from transformers.models.vit.modeling_vit import ViTEmbeddings,  ViTSelfAttention, ViTAttention, ViTEncoder, ViTLayer
-from .mask_vit_embedding import MyViTForward, MyEmbeddingsForward, MyViTForImageClassificationForward, MyViTSelfAttentionforward, MyViTEncoderForward, MyViTAttentionForward, MyViTLayerForward
+from transformers.models.vit.modeling_vit import ViTEmbeddings
+from .mask_vit_embedding import MoXIViTForward, MoXIEmbeddingsForward, MoXIViTForImageClassificationForward
 import os
 
 # load_model
@@ -30,25 +30,13 @@ def load_model(args):
     return model, image_processor
 
 # when using the mask method with a removal patch, vit_embedding is replaced.
-def replace_vit_embedding_mask(args, model):
-    if args.interaction_method == 'vit_embedding' and not args.isUsedTargetLayer:
+def replace_vit_embedding(args, model):
+    if args.interaction_method == 'vit_embedding':
         print('vit embedding')
-        print('Target Layer is not used')
-        model.vit.embeddings.forward = MyEmbeddingsForward.__get__(model.vit.embeddings, ViTEmbeddings)
-        model.vit.forward = MyViTForward.__get__(model.vit, ViTModel)
-        model.forward = MyViTForImageClassificationForward.__get__(model, ViTForImageClassification)
-    elif args.interaction_method == 'vit_embedding' and args.isUsedTargetLayer:
-        print('vit embedding')
-        print('Target Layer is used')
-        model.vit.encoder.forward = MyViTEncoderForward.__get__(model.vit.encoder, ViTEncoder)
-        model.vit.forward = MyViTForward.__get__(model.vit, ViTModel)
-        model.forward = MyViTForImageClassificationForward.__get__(model, ViTForImageClassification)
-        print(f'all layer numbers: {len(model.vit.encoder.layer)}')
-        for index in range(len(model.vit.encoder.layer)):
-            model.vit.encoder.layer[index].attention.attention.forward = MyViTSelfAttentionforward.__get__(model.vit.encoder.layer[index].attention.attention, ViTSelfAttention)
-            model.vit.encoder.layer[index].attention.forward = MyViTAttentionForward.__get__(model.vit.encoder.layer[index].attention, ViTAttention)
-            model.vit.encoder.layer[index].forward = MyViTLayerForward.__get__(model.vit.encoder.layer[index], ViTLayer)
-    elif args.interaction_method == 'pixel_zero_input':
+        model.vit.embeddings.forward = MoXIEmbeddingsForward.__get__(model.vit.embeddings, ViTEmbeddings)
+        model.vit.forward = MoXIViTForward.__get__(model.vit, ViTModel)
+        model.forward = MoXIViTForImageClassificationForward.__get__(model, ViTForImageClassification)
+    elif args.interaction_method == 'pixel_zero_values':
         print('pixel zero input')
         pass
     return model

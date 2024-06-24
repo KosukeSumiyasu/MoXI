@@ -8,7 +8,7 @@ from pytorch_grad_cam.utils.image import scale_cam_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 
 
-def grad_cam(images: Tensor, vit: ViTForImageClassification, label: int,  use_cuda: bool = False) -> Tensor:
+def grad_cam(images: Tensor, vit: ViTForImageClassification, label: int) -> Tensor:
     """Performs the Grad-CAM method on a batch of images (https://arxiv.org/pdf/1610.02391.pdf)."""
 
     # Wrap the ViT model to be compatible with GradCAM
@@ -21,7 +21,6 @@ def grad_cam(images: Tensor, vit: ViTForImageClassification, label: int,  use_cu
         model=vit,
         target_layers=target_layers,
         reshape_transform=_reshape_transform,
-        use_cuda=use_cuda,
     )
     cam.compute_cam_per_layer = compute_cam_per_layer.__get__(cam)
     # Compute GradCAM masks

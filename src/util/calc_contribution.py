@@ -56,12 +56,12 @@ def online_identifying(args, model, imageProcessor, image, label):
             identified_patch.append(new_patch)
     # -------------------gradcam-------------------
     elif args.identify_method == 'gradcam':
-        heatmap = get_reward_gradcam(image, label, model, imageProcessor)
+        heatmap = get_reward_gradcam(args, image, label, model, imageProcessor)
         heatmap = reshape_heatmap(args, heatmap)
         identified_patch = get_identified_patch(args, heatmap)
     # -------------------attention rollout-------------------
     elif args.identify_method == 'attention_rollout':
-        heatmap = get_reward_attention_rollout(image, model, imageProcessor)
+        heatmap = get_reward_attention_rollout(args, image, model, imageProcessor)
         heatmap = reshape_heatmap(args, heatmap)
         identified_patch = get_identified_patch(args, heatmap)
     return identified_patch

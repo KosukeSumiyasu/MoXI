@@ -26,8 +26,6 @@ def save_result(save_path, result):
 
 def create_save_dir(args):
     save_dir = os.path.join(args.save_result_dir, f'online_identify/{args.dataset}_{args.dataset_sampling_number}/{args.model_name}/{args.curve_method}/{args.identify_method}')
-    if args.isUsedTargetLayer:
-        save_dir = os.path.join(save_dir, f'isUsedTargetLayer/target_layer_{args.target_mask_layer}')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     return save_dir

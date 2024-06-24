@@ -35,7 +35,8 @@ def main(args):
     print("---------evaluate...---------")
     if args.curve_method == 'insertion':
         result = calc_insertion_curve(args, model, imageProcessor, dataset, replace_dict, load_dir)
-        save_path = os.path.join(load_dir, f"insertion/{args.identify_method}/insertion_accuracy")
+        save_dir = create_save_dir(args)
+        save_path = os.path.join(save_dir, f"insertion_accuracy.npy")
         save_result(save_path, result)
     elif args.curve_method == 'deletion':
         result = calc_deletion_curve(args, model, imageProcessor, dataset, replace_dict, load_dir)
@@ -45,12 +46,14 @@ def main(args):
     elif args.curve_method == 'both':
         args.curve_method == 'insertion'
         result = calc_insertion_curve(args, model, imageProcessor, dataset, replace_dict, load_dir)
-        save_path = os.path.join(load_dir, f"insertion/{args.identify_method}/insertion_accuracy")
+        save_dir = create_save_dir(args)
+        save_path = os.path.join(save_dir, f"insertion_accuracy.npy")
         save_result(save_path, result)
         
         args.curve_method == 'deletion'
         result = calc_deletion_curve(args, model, imageProcessor, dataset, replace_dict, load_dir)
-        save_path = os.path.join(load_dir, f"deletion/{args.identify_method}/deletion_accuracy")
+        save_dir = create_save_dir(args)
+        save_path = os.path.join(save_dir, f"deletion_accuracy.npy")
         save_result(save_path, result)
     print("---------finish---------")
 
