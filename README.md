@@ -40,6 +40,7 @@ model = load_your_model(...)
 If you use Vision Transformer models, we highly recommend using this implementation.
 If your model is based on `VisionTransformerClassifier` class of a HuggingFace, it’s very simple.
 ```
+replace_vit_embedding_mask(args, model)
 ```
 Otherwise, you need a slight modification in your model.
 - allow `forward()` functions to recieve `embedding_mask` keyword argument

@@ -30,7 +30,7 @@ def load_model(args):
     return model, image_processor
 
 # when using the mask method with a removal patch, vit_embedding is replaced.
-def replace_vit_embedding(args, model):
+def replace_vit_embedding_mask(args, model):
     if args.interaction_method == 'vit_embedding':
         print('vit embedding')
         model.vit.embeddings.forward = MoXIEmbeddingsForward.__get__(model.vit.embeddings, ViTEmbeddings)
