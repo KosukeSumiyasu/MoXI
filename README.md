@@ -30,18 +30,25 @@ Open Jupyter notebooks in ```notebook/```.
 ## Try out MoXI on your own model
 We offer two implementations of MoXI.
 
-### Implentation 1 (Model-agnostic implementation; in preparation).
+### Implentation 1 (Model-agnostic implementation).
 If your model is a CNN, use this implementation.
 ```
-model = load_your_model(...)
+from src.util.load_parser import load_parser
+args = load_parser() # set args.interaction_method = 'pixel_zero_values'
 ...
+model = load_your_model(...)
 ```
 ### Implementation 2 (ViT-aware implementation).
 If you use Vision Transformer models, we highly recommend using this implementation.
-If your model is based on `VisionTransformerClassifier` class of a HuggingFace, it’s very simple.
+If your model is based on `ViTForImageClassification` class of a HuggingFace, it’s very simple.
 ```
-replace_vit_embedding_mask(args, model)
+from src.util.load_parser import load_parser
+args = load_parser() # set args.interaction_method = 'vit_embedding'
+...
+model = replace_vit_embedding_mask(args, model)
 ```
+For example, refer to the model in "Visualize the heatmap" at https://github.com/KosukeSumiyasu/MoXI/blob/main/notebook/01_visualize_heatmap.ipynb
+
 Otherwise, you need a slight modification in your model.
 - allow `forward()` functions to recieve `embedding_mask` keyword argument
 - call `select_batch_removing()` in the input embedding module.
