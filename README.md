@@ -18,6 +18,7 @@ Please specify the ImageNet dataset path in the config_file_path.yaml file for i
 Step 1: run the following.
 ```
 $ cd MoXI
+$ pip install -r requirements.txt
 $ ./online_identify.sh
 $ ./evaluate_curve.sh
 ```
